@@ -11,12 +11,12 @@ export default defineConfig({
         port: 3000,
         hmr: false
     },
-    // test: {
-    //     environment: 'happy-dom',
-    //     setupFiles: ['./src/setupTests.ts'],
-    //     coverage: {
-    //         provider: 'v8',
-    //         reporter: ['text', 'json', 'html'],
-    //     },
-    // },
+    test: {
+        environment: 'happy-dom',
+        setupFiles: ['./movie-catalog/src/setupTests.ts'],
+        coverage: {
+            provider: 'v8',
+            reporter: ['text', 'json', 'html'],
+        },
+    },
 });

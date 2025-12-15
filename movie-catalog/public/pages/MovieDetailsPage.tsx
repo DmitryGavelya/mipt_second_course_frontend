@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { tmdbApi, MovieDetails } from '../api/tmdb';
 import FavoriteButton from '../components/FavoriteButton';
 import { formatDate } from '../utils/formatDate';
 
 const MovieDetailsPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const [movie, setMovie] = useState<MovieDetails | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -27,6 +28,10 @@ const MovieDetailsPage: React.FC = () => {
 
         fetchMovieDetails();
     }, [id]);
+
+    const handleAddToGraph = () => {
+        navigate(`/graph?movieId=${id}&movieName=${encodeURIComponent(movie?.title || '')}`);
+    };
 
     if (loading) return <div className="loading-spinner">Loading...</div>;
     if (error) return <div className="error-message">{error}</div>;
@@ -57,10 +62,19 @@ const MovieDetailsPage: React.FC = () => {
                         <div className="movie-details__info">
                             <div className="movie-details__header">
                                 <h1 className="movie-details__title">{movie.title}</h1>
-                                <FavoriteButton
-                                    movie={movie}
-                                    className="movie-details__favorite-button"
-                                />
+                                <div className="movie-details__actions">
+                                    <FavoriteButton
+                                        movie={movie}
+                                        className="movie-details__favorite-button"
+                                    />
+                                    <button
+                                        className="movie-details__graph-button"
+                                        onClick={handleAddToGraph}
+                                        title="Добавить в граф связей"
+                                    >
+                                        🔗 Граф
+                                    </button>
+                                </div>
                             </div>
                             <p className="movie-details__overview">{movie.overview}</p>
 
@@ -107,7 +121,11 @@ const MovieDetailsPage: React.FC = () => {
                         <h2 className="movie-details__section-title">Cast</h2>
                         <div className="movie-details__cast-grid">
                             {movie.credits.cast.map((actor) => (
-                                <div key={actor.id} className="movie-details__actor">
+                                <Link
+                                    key={actor.id}
+                                    to={`/actor/${actor.id}`}
+                                    className="movie-details__actor"
+                                >
                                     <img
                                         src={
                                             actor.profile_path
@@ -121,7 +139,7 @@ const MovieDetailsPage: React.FC = () => {
                                     <div className="movie-details__actor-character">
                                         {actor.character}
                                     </div>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     </div>
