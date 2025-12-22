@@ -1,7 +1,7 @@
 # Movie Catalog
 
-Интерактивное приложение для поиска фильмов и актёров с визуализацией связей между ними через интерактивный граф. Позволяет найти общие фильмы актёров и добавлять отзывы через Firebase.
-
+Интерактивное приложение для поиска фильмов и актёров с визуализацией связей между ними через интерактивный граф. Позволяет найти общие фильмы актёров
+и находить обших актеров у фильмов
 **Демо:** https://DmitryGavelya.github.io/mipt_second_course_frontend
 
 ---
@@ -17,10 +17,10 @@ cd mipt_second_course_frontend-3
 
 ## Требования
 
-- **Node.js** — версия 18+ ([скачать](https://nodejs.org/))
-- **npm** — версия 9+ (устанавливается с Node.js)
-- **TMDB API** — ключ для доступа к БД фильмов ([получить](https://www.themoviedb.org/settings/api))
-- **Firebase** — облачная БД для отзывов ([создать проект](https://console.firebase.google.com/))
+- **Node.js** — версия 18+
+- **npm** — версия 9+
+- **TMDB API** — ключ для доступа к БД фильмов
+- **Firebase** — облачная БД для отзывов
 
 ---
 
@@ -52,18 +52,11 @@ VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 ```
-
-**Где взять значения:**
-- **TMDB API Key** → https://www.themoviedb.org/settings/api (запросить как Developer)
-- **Firebase** → https://console.firebase.google.com/ (создать проект, включить Firestore)
-
 ### 3. Запуск приложения
 
 ```bash
 npm run dev
 ```
-
-Приложение откроется на **http://localhost:5173**
 
 ---
 
@@ -75,7 +68,6 @@ npm run dev
 4. Добавьте второго актёра (например, "Tom Hardy")
 5. **Граф автоматически найдёт общие фильмы** (где они снимались вместе)
 6. Кликните на фильм → откроется его страница с отзывами
-7. Добавьте отзыв о фильме через Firebase
 
 Альтернативный способ: откройте любой фильм → нажмите кнопку **"🔗 Граф"** → граф сразу откроется со всеми актёрами этого фильма.
 
@@ -119,3 +111,4 @@ movie-catalog/
 - **Firebase Firestore** — CRUD отзывов
 - **react-force-graph-2d** — визуализация графа
 - **Vitest** + **Playwright** — тестирование
+
