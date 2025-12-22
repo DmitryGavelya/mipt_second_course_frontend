@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Catalog - Интерактивная платформа графов</title>
+    <style>
+        :root {
+            --font-family-display: Arial, sans-serif;
+            --font-weight-display: 600;
+            --font-family-content: Arial, sans-serif;
+            --font-weight-content: 400;
+            --font-size-content: 16px;
+            --line-height-content: 1.4;
+        }
+
+        body.theme-dark {
+            --color-bg-base: #0f172a;
+            --color-bg-elevated: #020617;
+            --color-bg-surface: #1e293b;
+            --color-bg-muted: #334155;
+            --color-text-primary: #f1f5f9;
+            --color-text-secondary: #cbd5e1;
+            --color-text-muted: #94a3b8;
+            --color-text-accent: #38bdf8;
+            --color-primary: #38bdf8;
+            --color-primary-foreground: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-content);
+            font-weight: var(--font-weight-content);
+            font-size: var(--font-size-content);
+            line-height: var(--line-height-content);
+            overflow-x: hidden;
+        }
+
+        .slide {
+            width: 960px;
+            height: 540px;
+            margin: 0 auto 20px;
+            display: flex;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .row { flex-direction: row; }
+        .col { flex-direction: column; }
+        .center {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .items-center { align-items: center; }
+        .items-start { align-items: flex-start; }
+        .fill-width { flex: 1; }
+        .fill-height { flex: 1; display: flex; flex-direction: column; }
+
+        .gap-md { gap: 1rem; }
+        .gap-lg { gap: 1.5rem; }
+        .gap-xl { gap: 2rem; }
+
+        .p-8 { padding: 2rem; }
+        .p-12 { padding: 3rem; }
+        .p-16 { padding: 4rem; }
+
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+
+        .mt-4 { margin-top: 1rem; }
+        .mt-8 { margin-top: 2rem; }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-family-display);
+            font-weight: var(--font-weight-display);
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        h1 { font-size: 3rem; }
+        h2 { font-size: 2.25rem; }
+        h3 { font-size: 1.75rem; }
+        h4 { font-size: 1.5rem; }
+
+        .text-6xl { font-size: 3.75rem; }
+        .text-5xl { font-size: 3rem; }
+        .text-4xl { font-size: 2.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-base { font-size: 1rem; }
+        .text-sm { font-size: 0.875rem; }
+
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .font-medium { font-weight: 500; }
+
+        .text-center { text-align: center; }
+
+        ul, ol {
+            margin-left: 2rem;
+            line-height: 1.8;
+        }
+
+        li { margin-bottom: 0.75rem; }
+        li:last-child { margin-bottom: 0; }
+
+        .opacity-90 { opacity: 0.9; }
+        .opacity-80 { opacity: 0.8; }
+
+        .card-rect {
+            padding: 2rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background-color: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .nav-btn:hover {
+            background-color: #0284c7;
+        }
+
+        .nav-btn:disabled {
+            background-color: #334155;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            color: #cbd5e1;
+            font-size: 1rem;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .slides-container {
+            overflow: hidden;
+        }
+
+        .slides-wrapper {
+            display: flex;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .slide {
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+
+    <div class="slides-container">
+        <div class="slides-wrapper" id="slidesWrapper">
+
+    <!-- SLIDE 1: Титульный слайд -->
+    <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+        <h1 class="text-6xl mb-4" style="color: #38bdf8;">🎬 Movie Catalog</h1>
+        <p class="text-2xl mb-8" style="color: #cbd5e1;">Интерактивная платформа поиска фильмов и актёров</p>
+        <p class="text-sm mt-8" style="color: #94a3b8;">React + TypeScript + TMDB API + Firebase</p>
+    </section>
+
+    <!-- SLIDE 2: Проблема -->
+    <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">📋 Проблема</h2>
+        <ul class="text-lg" style="color: #cbd5e1;">
+            <li>Как найти общие фильмы двух актёров?</li>
+            <li>Какие актёры играли в обоих твоих любимых фильмах?</li>
+            <li>Обычный поиск не показывает эти связи</li>
+        </ul>
+    </section>
+
+    <!-- SLIDE 3: Ключевая фишка - Граф -->
+    <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">✨ Интерактивный граф связей</h2>
+        <ul class="text-lg" style="color: #cbd5e1;">
+            <li>Введи двух актёров → покажет общие фильмы</li>
+            <li>Введи два фильма → найдёт общих актёров</li>
+            <li>Кликни на любой узел → откроются детали</li>
+        </ul>
+    </section>
+
+    <!-- SLIDE 4: Основные возможности -->
+    <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">🚀 Основные возможности</h2>
+        <ul class="text-lg" style="color: #cbd5e1;">
+            <li>📊 Динамический граф с react-force-graph</li>
+            <li>⭐ Избранное с Redux управлением</li>
+            <li>💬 Отзывы и рейтинги на Firebase</li>
+            <li>🔍 Умный поиск с автодополнением</li>
+        </ul>
+    </section>
+
+    <!-- SLIDE 5: Стек технологий -->
+    <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">⚙️ Технологический стек</h2>
+        <div class="fill-height row gap-lg">
+            <div class="fill-width" style="background-color: #1e293b; color: #f1f5f9; padding: 2rem; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);">
+                <h3 style="color: #38bdf8;">Frontend</h3>
+                <p style="color: #cbd5e1;">React 18, TypeScript, Redux, React Router, Vite</p>
+            </div>
+            <div class="fill-width" style="background-color: #1e293b; color: #f1f5f9; padding: 2rem; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);">
+                <h3 style="color: #38bdf8;">Backend & Данные</h3>
+                <p style="color: #cbd5e1;">TMDB API, Firebase Firestore, Визуализация графов</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: Сценарий использования -->
+    <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">👥 Поиск по актёрам</h2>
+        <ul class="text-lg" style="color: #cbd5e1;">
+            <li>1. Введи имя актёра (например, Leonardo DiCaprio)</li>
+            <li>2. Добавь второго актёра (Tom Hardy)</li>
+            <li>3. Граф мгновенно покажет общие фильмы</li>
+            <li>4. Кликни на фильм → просмотри отзывы</li>
+        </ul>
+    </section>
+
+    <!-- SLIDE 7: Альтернативный способ -->
+    <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">🎞️ Поиск по фильмам</h2>
+        <ul class="text-lg" style="color: #cbd5e1;">
+            <li>Найди фильм → нажми на кнопку граф (🔗)</li>
+            <li>Сразу увидишь всех актёров фильма</li>
+            <li>Изучай взаимосвязи актёров внутри фильма</li>
+        </ul>
+    </section>
+
+    <!-- SLIDE 8: Архитектура -->
+    <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">🏗️ Архитектурные решения</h2>
+        <ul class="text-lg" style="color: #cbd5e1;">
+            <li>Redux для глобального состояния избранного</li>
+            <li>Firebase Firestore для отзывов пользователей</li>
+            <li>Кэширование API и автодополнение</li>
+            <li>Force-graph для визуализации связей</li>
+        </ul>
+    </section>
+
+    <!-- SLIDE 9: Ключевые компоненты -->
+    <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">🧩 Основные компоненты</h2>
+        <ul class="text-lg" style="color: #cbd5e1;">
+            <li>MovieCard: карточка фильма с избранным</li>
+            <li>GraphVisualization: интерактивный граф</li>
+            <li>SearchAutocomplete: поиск с предложениями</li>
+            <li>ReviewPanel: отзывы на Firebase</li>
+        </ul>
+    </section>
+
+    <!-- SLIDE 10: Демо -->
+    <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">🌐 Попробуй сейчас</h2>
+        <p class="text-xl mb-4" style="color: #cbd5e1;">Живое демо:</p>
+        <p class="text-lg" style="color: #38bdf8; word-break: break-all;">DmitryGavelya.github.io/mipt_second_course_frontend</p>
+    </section>
+
+    <!-- SLIDE 11: Структура проекта -->
+    <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-4" style="color: #38bdf8;">📂 Структура проекта</h2>
+        <ul class="text-lg" style="color: #cbd5e1;">
+            <li>components/ → React компоненты</li>
+            <li>pages/ → страницы приложения</li>
+            <li>api/ → интеграция TMDB и Firebase</li>
+            <li>features/ → Redux слайсы для состояния</li>
+        </ul>
+    </section>
+
+    <!-- SLIDE 12: Почему это важно -->
+    <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+        <h2 class="mb-6" style="color: #38bdf8;">💡 Почему это важно</h2>
+        <p class="text-xl" style="color: #cbd5e1; line-height: 1.6;">Графы превращают статичные данные в динамические сети. Находи скрытые связи между любимыми актёрами и фильмами в реальном времени.</p>
+    </section>
+
+    <!-- SLIDE 13: Финальный слайд -->
+    <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+        <h2 class="text-5xl mb-6" style="color: #38bdf8;">Спасибо! 🎭</h2>
+        <p class="text-xl" style="color: #cbd5e1;">Вопросы?</p>
+        <p class="text-sm mt-8" style="color: #94a3b8;">React + TypeScript + TMDB API + Firebase</p>
+    </section>
+
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="previousSlide()">← Назад</button>
+        <span class="slide-counter"><span id="currentSlide">1</span> / 13</span>
+        <button class="nav-btn" id="nextBtn" onclick="nextSlide()">Вперёд →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 13;
+
+        function updateSlidePosition() {
+            const wrapper = document.getElementById('slidesWrapper');
+            const offset = (currentSlide - 1) * -960;
+            wrapper.style.transform = `translateX(${offset}px)`;
+            
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlidePosition();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlidePosition();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        // Initialize
+        updateSlidePosition();
+    </script>
+
+</body>
+</html>
