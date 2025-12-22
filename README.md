@@ -2,7 +2,7 @@
 
 Интерактивное приложение для поиска фильмов и актёров с визуализацией связей между ними через интерактивный граф. Позволяет найти общие фильмы актёров
 и находить обших актеров у фильмов
-**Демо:** https://DmitryGavelya.github.io/mipt_second_course_frontend
+https://mipt-second-course-frontend-4.vercel.app/
 
 ---
 
@@ -111,4 +111,5 @@ movie-catalog/
 - **Firebase Firestore** — CRUD отзывов
 - **react-force-graph-2d** — визуализация графа
 - **Vitest** + **Playwright** — тестирование
+
 
